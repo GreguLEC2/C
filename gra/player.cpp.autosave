@@ -1,0 +1,90 @@
+#include "header.h"
+
+Player::Player() : health(100) {
+    // Inicjalizacja narzędzi
+    tools["wąż"] = 1;
+    tools["gaśnica"] = 1;
+    tools["bomba wodna"] = 1;
+}
+
+void Player::displayInventory() const {
+    QString inventoryText = "Ekwipunek:\n";
+    for (const auto& item : inventory) {
+        inventoryText += "- " + QString::fromStdString(item) + "\n";
+    }
+    inventoryText += "Narzędzia:\n";
+    for (const auto& tool : tools) {
+        inventoryText += "- " + QString::fromStdString(tool.first) + ": poziom " + QString::number(tool.second) + "\n";
+    }
+    inventoryText += "Zdrowie: " + QString::number(health) + "\n";
+    displayText(inventoryText.toStdString());
+}
+
+void Player::addItem(const std::string& item) {
+    inventory.push_back(item);
+    displayText(item + " dodany do ekwipunku.");
+}
+
+void Player::upgradeTool(const std::string& tool) {
+    if (tools.find(tool) != tools.end()) {
+        tools[tool]++;
+        displayText(tool + " ulepszony do poziomu " + std::to_string(tools[tool]) + ".");
+    } else {
+        displayText("Narzędzie nie znalezione.");
+    }
+}
+
+void Player::save(std::ofstream& saveFile) {
+    int inventorySize = inventory.size();
+    saveFile << inventorySize << "\n";
+    for (const auto& item : inventory) {
+        saveFile << item << "\n";
+    }
+    int toolsSize = tools.size();
+    saveFile << toolsSize << "\n";
+    for (const auto& tool : tools) {
+        saveFile << tool.first << " " << tool.second << "\n";
+    }
+    saveFile << health << "\n";
+}
+
+void Player::load(std::ifstream& loadFile) {
+    int inventorySize;
+    loadFile >> inventorySize;
+    inventory.clear();
+    for (int i = 0; i < inventorySize; ++i) {
+        std::string item;
+        loadFile >> item;
+        inventory.push_back(item);
+    }
+    int toolsSize;
+    loadFile >> toolsSize;
+    tools.clear();
+    for (int i = 0; i < toolsSize; ++i) {
+        std::string toolName;
+        int toolLevel;
+        loadFile >> toolName >> toolLevel;
+        tools[toolName] = toolLevel;
+    }
+    loadFile >> health;
+}
+
+int Player::getHealth() const {
+    return health;
+}
+
+void Player::takeDamage(int damage) {
+    health -= damage;
+    if (health < 0) health = 0;
+    displayText("Gracz otrzymał " + std::to_string(damage) + " obrażeń. Zdrowie: " + std::to_string(health));
+}
+
+void Player::heal(int amount) {
+    health += amount;
+    if (health > 100) health = 100;
+    displayText("Gracz wyleczony o " + std::to_string(amount) + " punktów zdrowia. Zdrowie: " + std::to_string(health));
+}
+
+int Player::attack() const {
+    return randomDamage(10, 30); // Przykładowy zakres obrażeń
+}

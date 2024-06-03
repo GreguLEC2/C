@@ -1,0 +1,49 @@
+#ifndef GAME_H
+#define GAME_H
+
+#include <QMainWindow>
+#include <QTextEdit>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QRadioButton>
+#include <QButtonGroup>
+#include "player.h"
+#include "dragon.h"
+#include "location.h"
+
+class Game : public QMainWindow {
+    Q_OBJECT
+    
+public:
+    Game(QWidget *parent = nullptr);
+    ~Game();
+    QTextEdit* getTextEdit() const;
+    
+private slots:
+    void startGame();
+    void showMenu();
+    void handleInput();
+    void saveGame();
+    void loadGame();
+    void onOptionSelected(int id);
+    
+private:
+    void showIntroduction();
+    void explore();
+    void rescueMission();
+    void finalConfrontation();
+    void fightDragon(Dragon &dragon);
+    
+    Player player;
+    int gameState;
+    std::vector<Location> locations;
+    std::vector<Dragon> dragons;
+    
+    QTextEdit *textEdit;
+    QVBoxLayout *layout;
+    QWidget *centralWidget;
+    QButtonGroup *optionGroup; // Grupa przycisków opcji
+    QPushButton *inputButton;
+};
+
+#endif // GAME_H

@@ -1,0 +1,32 @@
+#include "header.h"
+
+Dragon::Dragon(const std::string& name, const std::string& ability, int strength)
+    : name(name), ability(ability), strength(strength), health(100) {}
+
+void Dragon::displayDragonInfo() const {
+    QString info = "Imię smoka: " + QString::fromStdString(name) + "\n";
+    info += "Zdolność: " + QString::fromStdString(ability) + "\n";
+    info += "Siła: " + QString::number(strength) + "\n";
+    info += "Zdrowie: " + QString::number(health) + "\n";
+    displayText(info.toStdString());
+}
+
+std::string Dragon::getName() const {
+    return name;
+}
+
+int Dragon::getHealth() const {
+    return health;
+}
+
+void Dragon::takeDamage(int damage) {
+    health -= damage;
+    if (health < 0) health = 0;
+    displayText("Smok otrzymał " + std::to_string(damage) + " obrażeń. Zdrowie: " + std::to_string(health));
+}
+
+void Dragon::attackPlayer(Player& player) {
+    int damage = randomDamage(10, strength * 10); // Przykładowy zakres obrażeń
+    player.takeDamage(damage);
+    displayText("Smok zaatakował gracza, zadając " + std::to_string(damage) + " obrażeń.");
+}

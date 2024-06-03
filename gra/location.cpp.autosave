@@ -1,0 +1,54 @@
+#include "header.h"
+#include <cstdlib>
+#include <ctime>
+
+Location::Location(const std::string& name, const std::string& description)
+    : name(name), description(description) {
+    // Inicjalizacja generatora losowego
+    std::srand(std::time(0));
+}
+
+void Location::displayLocationInfo() const {
+    QString info = "Lokalizacja: " + QString::fromStdString(name) + "\n";
+    info += "Opis: " + QString::fromStdString(description) + "\n";
+    displayText(info.toStdString());
+}
+
+std::string Location::getName() const {
+    return name;
+}
+
+bool Location::solvePuzzle() const {
+    std::vector<std::pair<std::string, std::string>> puzzles = {
+        {"Co ma głowę, a nie ma oczu?", "główka kapusty"},
+        {"Co ma szyję, ale nie ma głowy?", "butelka"},
+        {"Co biegnie, ale nie ma nóg?", "rzeka"},
+        {"Co rośnie, ale nie ma życia?", "ciasto"}
+    };
+    
+    int randomIndex = std::rand() % puzzles.size();
+    std::string question = puzzles[randomIndex].first;
+    std::string correctAnswer = puzzles[randomIndex].second;
+    
+    displayText("Łamigłówka: " + question);
+    std::string answer;
+    std::cin.ignore();
+    std::getline(std::cin, answer);
+    
+    if (answer == correctAnswer) {
+        displayText("Rozwiązałeś łamigłówkę!");
+        return true;
+    } else {
+        displayText("Niepoprawna odpowiedź. Spróbuj ponownie.");
+        return solvePuzzle();
+    }
+}
+
+void Location::exploreLocation() const {
+    displayLocationInfo();
+    if (solvePuzzle()) {
+        displayText("Możesz kontynuować eksplorację.");
+    } else {
+        displayText("Nie udało ci się rozwiązać łamigłówki. Powrót do menu.");
+    }
+}

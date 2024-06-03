@@ -1,0 +1,207 @@
+#include "game.h"
+#include <QVBoxLayout>
+#include <QInputDialog>
+#include <QFile>
+#include <QTextStream>
+#include <cstdlib>
+#include <ctime>
+
+Game::Game(QWidget *parent)
+    : QMainWindow(parent), gameState(0) {
+    // Inicjalizacja lokalizacji
+    locations.push_back(Location("Pyroklas", "Tętniące życiem miasto znane z częstych obserwacji smoków i pożarów."));
+    locations.push_back(Location("Wulkaniczne Góry", "Niebezpieczny obszar, w którym rzekomo mieszka Władca Żaru."));
+    
+    // Inicjalizacja smoków
+    dragons.push_back(Dragon("Płomienny Pazur", "Ognisty Oddech", 5));
+    dragons.push_back(Dragon("Dymna Skóra", "Dymna Zasłona", 3));
+    dragons.push_back(Dragon("Burzowe Skrzydło", "Manipulacja Pogodą", 4));
+    
+    // Konfiguracja GUI
+    centralWidget = new QWidget(this);
+    setCentralWidget(centralWidget);
+    
+    textEdit = new QTextEdit(this);
+    textEdit->setReadOnly(true);
+    
+    inputButton = new QPushButton("Rozpocznij grę", this);
+    connect(inputButton, &QPushButton::clicked, this, &Game::startGame);
+    
+    layout = new QVBoxLayout;
+    layout->addWidget(textEdit);
+    layout->addWidget(inputButton);
+    
+    centralWidget->setLayout(layout);
+    
+    showIntroduction();
+}
+
+Game::~Game() {}
+
+QTextEdit* Game::getTextEdit() const {
+    return textEdit;
+}
+
+void Game::startGame() {
+    inputButton->setText("Wybierz");
+    disconnect(inputButton, &QPushButton::clicked, this, &Game::startGame);
+    connect(inputButton, &QPushButton::clicked, this, &Game::handleInput);
+    showMenu();
+}
+
+void Game::showIntroduction() {
+    textEdit->append("Witaj w grze przygodowej!");
+    textEdit->append("Jesteś członkiem elitarnej Brygady Skrzydła Ognia.");
+    textEdit->append("Twoją misją jest ochrona miasta Pyroklas przed atakami smoków.");
+}
+
+void Game::showMenu() {
+    textEdit->append("\nMenu: (1) Eksploruj (2) Misja ratunkowa (3) Ostateczna konfrontacja (4) Zapisz grę (5) Wczytaj grę (6) Wyjdź");
+}
+
+void Game::handleInput() {
+    bool ok;
+    int choice = QInputDialog::getInt(this, "Wybierz opcję", "Opcja:", 1, 1, 6, 1, &ok);
+    if (ok) {
+        switch (choice) {
+        case 1:
+            explore();
+            break;
+        case 2:
+            rescueMission();
+            break;
+        case 3:
+            finalConfrontation();
+            break;
+        case 4:
+            saveGame();
+            break;
+        case 5:
+            loadGame();
+            break;
+        case 6:
+            close();
+            break;
+        default:
+            textEdit->append("Nieprawidłowe wejście.");
+            break;
+        }
+    }
+}
+
+void Game::explore() {
+    textEdit->append("Eksplorujesz teren.");
+    for (auto &location : locations) {
+        location.exploreLocation();
+    }
+    textEdit->append("Napotykasz smoka!");
+    fightDragon(dragons[0]); // Przykładowa walka z pierwszym smokiem
+}
+
+// Implementacja misji ratunkowej (kod dostarczony wcześniej)
+
+void Game::finalConfrontation() {
+    textEdit->append("Konfrontujesz się z Władcą Żaru w epickiej bitwie.");
+    fightDragon(dragons[2]); // Walka z ostatnim smokiem
+    
+    if (player.getHealth() > 0) {
+        textEdit->append("Pokonałeś Władcę Żaru! Miasto Pyroklas jest bezpieczne.");
+        bool ok;
+        int choice = QInputDialog::getInt(this, "Wybierz zakończenie", "Opcja:", 1, 1, 3, 1, &ok);
+        if (ok) {
+            switch (choice) {
+            case 1:
+                textEdit->append("Zostałeś bohaterem miasta Pyroklas! Mieszkańcy są ci wdzięczni.");
+                break;
+            case 2:
+                textEdit->append("Opuściłeś miasto i rozpocząłeś nowe życie w spokoju.");
+                break;
+            case 3:
+                textEdit->append("Wyruszyłeś w poszukiwaniu nowych przygód, by stawić czoła nowym wyzwaniom.");
+                break;
+            default:
+                textEdit->append("Niepoprawny wybór. Gra zakończona.");
+                break;
+            }
+        }
+    } else {
+        textEdit->append("Zostałeś pokonany przez Władcę Żaru. Miasto Pyroklas jest zniszczone.");
+    }
+}
+
+void Game::fightDragon(Dragon &dragon) {
+    textEdit->append("Walczysz ze smokiem!");
+    dragon.displayDragonInfo();
+    
+    while (player.getHealth() > 0 && dragon.getHealth() > 0) {
+        bool ok;
+        int action = QInputDialog::getInt(this, "Wybierz akcję", "(1) Atakuj (2) Użyj narzędzia (3) Wylecz się", 1, 1, 3, 1, &ok);
+        if (ok) {
+            switch (action) {
+            case 1: {
+                int damage = player.attack();
+                dragon.takeDamage(damage);
+                if (dragon.getHealth() > 0) {
+                    dragon.attackPlayer(player);
+                }
+                break;
+            }
+            case 2: {
+                textEdit->append("Używasz narzędzia, aby zadać dodatkowe obrażenia.");
+                int damage = randomDamage(20, 40); // Przykładowy zakres obrażeń narzędzia
+                dragon.takeDamage(damage);
+                if (dragon.getHealth() > 0) {
+                    dragon.attackPlayer(player);
+                }
+                break;
+            }
+            case 3:
+                player.heal(20); // Przykładowa wartość leczenia
+                if (dragon.getHealth() > 0) {
+                    dragon.attackPlayer(player);
+                }
+                break;
+            default:
+                textEdit->append("Nieprawidłowa akcja.");
+                break;
+            }
+        }
+    }
+    
+    if (player.getHealth() > 0) {
+        textEdit->append("Pokonałeś smoka!");
+    } else {
+        textEdit->append("Zostałeś pokonany przez smoka.");
+    }
+}
+
+void Game::saveGame() {
+    QFile file("savegame.txt");
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << gameState << "\n";
+        out << player.getHealth() << "\n";
+        // Dodaj więcej stanów do zapisu
+        file.close();
+        textEdit->append("Gra zapisana.");
+    } else {
+        textEdit->append("Błąd zapisu gry.");
+    }
+}
+
+void Game::loadGame() {
+    QFile file("savegame.txt");
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        in >> gameState;
+        int health;
+        in >> health;
+        player.setHealth(health);
+        // Dodaj więcej stanów do wczytania
+        file.close();
+        textEdit->append("Gra wczytana.");
+    } else {
+        textEdit->append("Brak pliku zapisu.");
+    }
+}
+
