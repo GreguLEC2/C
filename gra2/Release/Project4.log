@@ -1,0 +1,41 @@
+﻿  Main.cpp
+C:\Users\grego\source\repos\Project4\Project4\Main.cpp(282,62): warning C4244: "argument": konwersja z "T" do "float", możliwa utrata danych
+          with
+          [
+              T=unsigned int
+          ]
+C:\Users\grego\source\repos\Project4\Project4\Main.cpp(916,54): warning C4244: "argument": konwersja z "T" do "float", możliwa utrata danych
+          with
+          [
+              T=unsigned int
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xmemory(681,68): warning C4244: "argument": konwersja z "_Ty" do "float", możliwa utrata danych
+          with
+          [
+              _Ty=int
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(708): message : zobacz odwołanie do kompilowanego tworzenia wystąpienia „void std::_Default_allocator_traits<_Alloc>::construct<_Ty,const char(&)[13],sf::Font&,int,float&>(_Alloc &,_Objty *const ,const char (&)[13],sf::Font &,int &&,float &)” funkcji szablon
+          with
+          [
+              _Alloc=std::allocator<Button>,
+              _Ty=Button,
+              _Objty=Button
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(713): message : zobacz odwołanie do kompilowanego tworzenia wystąpienia „void std::_Default_allocator_traits<_Alloc>::construct<_Ty,const char(&)[13],sf::Font&,int,float&>(_Alloc &,_Objty *const ,const char (&)[13],sf::Font &,int &&,float &)” funkcji szablon
+          with
+          [
+              _Alloc=std::allocator<Button>,
+              _Ty=Button,
+              _Objty=Button
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(726): message : zobacz odwołanie do kompilowanego tworzenia wystąpienia „void std::vector<Button,std::allocator<Button>>::_Emplace_back_with_unused_capacity<const char(&)[13],sf::Font&,_Ty,float&>(const char (&)[13],sf::Font &,_Ty &&,float &)” funkcji szablon
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\grego\source\repos\Project4\Project4\Main.cpp(575): message : zobacz odwołanie do kompilowanego tworzenia wystąpienia „void std::vector<Button,std::allocator<Button>>::emplace_back<const char(&)[13],sf::Font&,int,float&>(const char (&)[13],sf::Font &,int &&,float &)” funkcji szablon
+  Trwa generowanie kodu
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+  All 1116 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Zakończono generowanie kodu
+  Project4.vcxproj -> C:\Users\grego\source\repos\Project4\Release\Project4.exe
